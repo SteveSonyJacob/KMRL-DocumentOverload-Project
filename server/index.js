@@ -45,14 +45,32 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
     const filename = req.file.originalname;
     const ext = path.extname(filename).toLowerCase();
 
-    // 1) PDF to text (only for PDFs)
-    let extractedText = "";
-    if (ext === ".pdf") {
+  // 1) PDF to text (only for PDFs)
+  let extractedText = "";
+  if (ext === ".pdf") {
+    try {
       const { stdout } = await runPython(path.join(__dirname, "..", "pdf2text.py"), [filepath]);
       extractedText = stdout.trim();
-    } else {
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(`pdf2text failed for ${filename}: ${e?.message || e}`);
       extractedText = "";
     }
+  } else {
+    extractedText = "";
+  }
+
+  // Persist extracted text next to the uploaded file (always write, even if empty)
+  const baseName = path.basename(filename, ext);
+  const textFilePath = path.join(uploadsDir, `${baseName}.txt`);
+  try {
+    fs.writeFileSync(textFilePath, extractedText || "", "utf8");
+    // eslint-disable-next-line no-console
+    console.log(`Saved extracted text to: ${textFilePath}`);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error(`Failed to write text file: ${e?.message || e}`);
+  }
 
     // 2) Summarization (pass text via stdin to avoid arg limits)
     const python = process.env.PYTHON || "python";
@@ -78,7 +96,7 @@ app.post("/api/upload", upload.single("file"), async (req, res) => {
         try { tags = JSON.parse(match[1].replace(/'/g, '"')); } catch {}
       }
 
-      return res.json({ filename, text: extractedText, summary, tags });
+      return res.json({ filename, text: extractedText, summary, tags, textFilePath });
     });
     sumProc.stdin.write(extractedText);
     sumProc.stdin.end();
