@@ -1,6 +1,7 @@
 import pdfplumber
+import sys
 
-pdf_path = r"" #path to the pdf file
+pdf_path = sys.argv[1] if len(sys.argv) > 1 else ""  # path to the pdf file
 
 with pdfplumber.open(pdf_path) as pdf:
     all_text = ""

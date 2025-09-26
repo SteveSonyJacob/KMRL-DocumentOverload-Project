@@ -1,13 +1,15 @@
 from transformers import pipeline
+import sys
 
 # -------------------
 # 1️⃣ Input text
 # -------------------
-text = """
-
-Safety inspections revealed three minor hazards in the central station.
-The board recommended immediate corrective measures and an additional audit next month.
-"""
+if len(sys.argv) > 1:
+    # Accept input text via CLI arg (passed from orchestrator)
+    text = sys.argv[1]
+else:
+    # Fallback to reading from stdin for large text
+    text = sys.stdin.read()
 # -------------------
 # 2️⃣ Summarization
 # -------------------
@@ -21,3 +23,6 @@ print(summary_text)
 # -------------------
 with open("summary.txt", "w", encoding="utf-8") as f:
     f.write(summary_text)
+
+# Also print the summary plainly so a caller can capture it
+print("__SUMMARY_ONLY__\n" + summary_text)

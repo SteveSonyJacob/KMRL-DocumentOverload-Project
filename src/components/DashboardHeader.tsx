@@ -15,19 +15,34 @@ export const DashboardHeader = () => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Immediately trigger a download of the selected file
-    const blobUrl = URL.createObjectURL(file);
-    const link = document.createElement("a");
-    link.href = blobUrl;
-    // Use original filename; browsers will save to Downloads by default
-    link.download = file.name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(blobUrl);
-
-    // Reset the input so the same file can be selected again if needed
-    event.currentTarget.value = "";
+    // Send file to backend for processing (pdf2text -> summarization -> tagging)
+    const formData = new FormData();
+    formData.append("file", file);
+    fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error("Upload failed");
+        const data = await res.json();
+        // Optionally, trigger a JSON download of results
+        const resultBlob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(resultBlob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${data.filename.replace(/\.[^/.]+$/, "")}-analysis.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      })
+      .catch(() => {
+        // Swallow errors for now or integrate toast UI
+      })
+      .finally(() => {
+        // Reset the input so the same file can be selected again if needed
+        event.currentTarget.value = "";
+      });
   };
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm">

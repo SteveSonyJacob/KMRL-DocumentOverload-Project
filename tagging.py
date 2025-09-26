@@ -1,6 +1,11 @@
 import json
-with open("summary.txt", "r", encoding="utf-8") as f:
-    summary_text = f.read()
+import sys
+
+if len(sys.argv) > 1:
+    summary_text = sys.argv[1]
+else:
+    with open("summary.txt", "r", encoding="utf-8") as f:
+        summary_text = f.read()
 # -------------------
 # 2️⃣ Define keywords for tagging
 # -------------------
@@ -25,10 +30,12 @@ print("Tags:", tags)
 # -------------------
 # 4️⃣ Save summary + tags to docs.json
 # -------------------
+filename = sys.argv[2] if len(sys.argv) > 2 else "uploaded.pdf"
 doc_data = {
-    "filename": "report1.pdf",  # NAME OF UPLOADED FILE
+    "filename": filename,
     "summary": summary_text,
     "tags": tags
 }
 with open("docs.json", "a", encoding="utf-8") as f:
     f.write(json.dumps(doc_data) + "\n")
+    
