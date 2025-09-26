@@ -1,9 +1,34 @@
-import { Bell, Search, User, Globe } from "lucide-react";
+import { Bell, Search, User, Globe, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useRef } from "react";
 
 export const DashboardHeader = () => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleChooseFile = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Immediately trigger a download of the selected file
+    const blobUrl = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    // Use original filename; browsers will save to Downloads by default
+    link.download = file.name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(blobUrl);
+
+    // Reset the input so the same file can be selected again if needed
+    event.currentTarget.value = "";
+  };
   return (
     <header className="border-b border-border bg-card/50 backdrop-blur-sm">
       <div className="flex items-center justify-between px-6 py-4">
@@ -21,6 +46,21 @@ export const DashboardHeader = () => {
         </div>
 
         <div className="flex items-center gap-4">
+          {/* Upload Button */}
+          <div className="flex items-center">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="application/pdf,image/*"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            <Button variant="outline" size="sm" className="gap-2" onClick={handleChooseFile}>
+              <Upload className="w-4 h-4" />
+              Upload
+            </Button>
+          </div>
+
           {/* Language Toggle */}
           <Button variant="ghost" size="sm" className="gap-2">
             <Globe className="w-4 h-4" />
