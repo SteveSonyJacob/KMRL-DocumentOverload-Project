@@ -1,1 +1,0 @@
-The code is written in C. The code is called compare_segments. It does two things: Calculate the total length of a segment and find the longest single segment. It is called 2024BCS0027 by Naevaneeth.

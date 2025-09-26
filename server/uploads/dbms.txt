@@ -1,0 +1,63 @@
+2024BCS0027
+NAVANEETH KRISHNA B
+Code:
+class Students:
+def __init__(self,name,rolln,dept,marks):
+self.name = name
+self.rolln = rolln
+self.dept = dept
+self.marks = marks
+def deptfiler(stu):
+for i in stu:
+if i.dept == "CSE":
+print(f"\nName: {i.name} Roll No.: {i.rolln} Dept: {i.dept} Marks: {sum(i.marks)}")
+print("\n")
+def printtab(stu):
+print("Name\tRoll No\tDept\tMarks")
+for i in stu:
+print(f"{i.name}\t{i.rolln}\t{i.dept}\t{sum(i.marks)}")
+print("\n")
+n = int(input("Enter number of students: "))
+stu = []
+for i in range(n):
+name = input(f"Name of student {i+1}: ")
+rolln = int(input(f"Rollnum of student {i+1}: "))
+dept = input(f"Department of student {i+1}: ")
+marks = [int(x) for x in input("Enter marks: ").split()]
+new_stu = Students(name,rolln,dept,marks)
+stu.append(new_stu)
+print("\n")
+print("Students: ")
+printtab(stu)
+print("\n")
+top_stu = stu[0]
+last_stu = stu[0]
+for i in stu:
+if sum(top_stu.marks) < sum(i.marks):
+top_stu = i
+if sum(last_stu.marks) > sum(i.marks):
+last_stu = i
+print(f"Top Student details:\nName: {top_stu.name} Roll No.: {top_stu.rolln} Dept: {top_stu.dept} Marks:
+{sum(top_stu.marks)}\n")
+print(f"Last Student details:\nName: {last_stu.name} Roll No.: {last_stu.rolln} Dept: {last_stu.dept} Marks:
+{sum(last_stu.marks)}\n")
+print("\n\nOnly CSE dept students: ")
+deptfiler(stu)
+n = len(stu)
+#sorting wrt rollnum:
+for i in range(n-1):
+for j in range(n-i-1):
+if stu[j].rolln > stu[j+1].rolln:
+stu[j],stu[j+1] = stu[j+1],stu[j]
+print("Table after sorting wrt rollnum: \n")
+printtab(stu)
+#deleting record of the given number:
+todel = int(input(("Enter the rollnumber to delete: ")))
+for i in stu:
+if i.rolln == todel:
+stu.remove(i)
+break
+print("After deleting \n")
+printtab(stu)
+Input:
+Q 1,2,3,4,5 OUTPUT:
