@@ -1,0 +1,9 @@
+**2024BCS0027 NAVANEETH KRISHNA B**
+
+This Python code implements a student management system using a `Students` class. It allows users to input multiple student records (name, roll number, department, marks). The program then performs several operations:
+
+*   Displays all student records in a formatted table.
+*   Identifies and displays the student with the highest and lowest total marks.
+*   Filters and displays only students belonging to the "CSE" department.
+*   Sorts all student records by roll number and displays the updated table.
+*   Allows the user to delete a student's record by entering their roll number, then displays the updated list.
